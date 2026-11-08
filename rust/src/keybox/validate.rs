@@ -19,6 +19,7 @@ const ROOT_GOOGLE_PEM: &[u8] = include_bytes!("roots/google.pem");
 const ROOT_AOSP_EC_PEM: &[u8] = include_bytes!("roots/aosp_ec.pem");
 const ROOT_AOSP_RSA_PEM: &[u8] = include_bytes!("roots/aosp_rsa.pem");
 const ROOT_KNOX_PEM: &[u8] = include_bytes!("roots/knox.pem");
+const ROOT_RKP_EC_CA1_PEM: &[u8] = include_bytes!("roots/rkp_ec_ca1.pem");
 const EMBEDDED_REVOCATION: &[u8] = include_bytes!("roots/status.json");
 
 const OID_RSA_SHA1: &str = "1.2.840.113549.1.1.5";
@@ -39,6 +40,7 @@ pub enum KeyboxRootType {
     AospEc,
     AospRsa,
     Knox,
+    RkpEcCa1,
     Unknown,
 }
 
@@ -49,6 +51,7 @@ impl KeyboxRootType {
             Self::AospEc => "aosp_ec",
             Self::AospRsa => "aosp_rsa",
             Self::Knox => "knox",
+            Self::RkpEcCa1 => "rkp_ec_ca1",
             Self::Unknown => "unknown",
         }
     }
@@ -358,7 +361,7 @@ fn check_key(
     if report.root_type == KeyboxRootType::Unknown {
         report
             .errors
-            .push("root certificate not recognized (Google/AOSP-EC/AOSP-RSA/Knox)".to_string());
+            .push("root certificate not recognized (Google/AOSP-EC/AOSP-RSA/Knox/RKP-EC-CA1)".to_string());
     } else if let Err(e) = verify_link(root, root) {
         report
             .errors
@@ -502,6 +505,7 @@ fn trust_anchors() -> &'static [(KeyboxRootType, Vec<u8>)] {
             (KeyboxRootType::AospEc, ROOT_AOSP_EC_PEM),
             (KeyboxRootType::AospRsa, ROOT_AOSP_RSA_PEM),
             (KeyboxRootType::Knox, ROOT_KNOX_PEM),
+            (KeyboxRootType::RkpEcCa1, ROOT_RKP_EC_CA1_PEM),
         ];
         pairs
             .iter()
